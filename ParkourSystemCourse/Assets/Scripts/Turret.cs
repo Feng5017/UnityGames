@@ -1,0 +1,107 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+public class Turret : MonoBehaviour
+{
+    private List<GameObject> enemys = new List<GameObject>();
+    void OnTriggerEnter(Collider col)
+    {
+        if (col.tag == "Enemy")
+        {
+            enemys.Add(col.gameObject);
+        }
+    }
+
+    void  OnTriggerExit(Collider col)
+    {
+        if (col.tag == "Enemy")
+        {
+            enemys.Remove(col.gameObject);
+        }
+    }
+
+    public float attackRateTime = 1;  //多少秒攻击一次
+    private float timer = 0;          //计时器
+
+    public GameObject bulletPrefab;     //子弹
+    public Transform firePosition;
+    public Transform head;  //头的指向
+
+    public bool useLaser = false;
+    public float damageRate = 70;
+    public LineRenderer laserRender;
+    public GameObject laserEffect;
+    void Start()
+    {
+        timer = attackRateTime;
+    }
+
+    void Update()
+    {
+        //if (timer < attackRateTime) 
+        if (enemys.Count > 0 && enemys[0] != null)
+        {
+            Vector3 targetPosition = enemys[0].transform.position;
+            targetPosition.y = head.position.y;
+            head.LookAt(targetPosition);
+        }
+        if (useLaser == false)
+        {
+            timer += Time.deltaTime;    //删
+            if (enemys.Count > 0 && timer >= attackRateTime)
+            {
+                //timer -= attackRateTime;
+                timer = 0;  //删
+                Attack();
+            }
+        }
+        else if (enemys.Count > 0) 
+        {
+            if (laserRender.enabled == false)
+                laserRender.enabled = true;
+            laserEffect.SetActive(true);
+            if (enemys[0] == null)
+            {
+                UpdateEnemys();
+            }
+            if (enemys.Count > 0)
+            {
+                laserRender.SetPositions(new Vector3[] { firePosition.position, enemys[0].transform.position });
+                enemys[0].GetComponent<Enemy1>().TakeDamage(damageRate*Time.deltaTime);
+                laserEffect.transform.position = enemys[0].transform.position;
+                Vector3 pos = transform.position;
+                pos.y = enemys[0].transform.position.y;
+                laserEffect.transform.LookAt(pos);
+            }
+        }
+        else 
+        {
+            laserEffect.SetActive(false);
+            laserRender.enabled = false;
+        }
+   }
+
+    void Attack()
+    {
+        if (enemys[0] == null)
+        {
+            UpdateEnemys();
+        }
+        if (enemys.Count > 0)
+        {
+            GameObject bullet = GameObject.Instantiate(bulletPrefab, firePosition.position, firePosition.rotation);
+            bullet.GetComponent<Bullet>().SetTarget(enemys[0].transform); 
+        }
+        else
+        {
+            timer = attackRateTime;
+        }
+    }
+
+    void UpdateEnemys()
+    {
+        enemys.RemoveAll(e => e == null);
+    }
+
+}

@@ -1,0 +1,20 @@
+# Unity generated directories, scoped to project roots
+/*/[Ll]ibrary/
+/*/[Tt]emp/
+/*/[Oo]bj/
+/*/[Ll]ogs/
+/*/[Uu]ser[Ss]ettings/
+/*/[Bb]uild/
+/*/[Bb]uilds/
+/*/[Mm]emoryCaptures/
+/*/[Rr]ecordings/
+/*/.vs/
+/*/.idea/
+/*/.plastic/
+/*/*.csproj
+/*/*.sln
+/*/*.suo
+/*/*.user
+.DS_Store
+Thumbs.db
+# Keep Assets (including all .meta files), Packages and ProjectSettings.
